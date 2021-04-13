@@ -16,7 +16,7 @@ const App = () => {
   const [state, setState] = useState({ number: 0 });
   return (
     <MyContext.Provider value={{ state, setState }}>
-      <Counter />
+      <Counter />Provider
     </MyContext.Provider>
   )
 }

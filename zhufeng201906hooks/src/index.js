@@ -1,39 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-//useRef和React.createRef
-/* 
-   
 
-*/
-let lastRef;
-function Child() {
-  // let refObject = React.createRef();//refObject:{current:要引用的组件}
-  let refObject = useRef();
-  console.log(lastRef === refObject);
-  lastRef = refObject;
-  function getFocus() {
-    refObject.current.focus();
+const initialState = { number: 0 };
+function reducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return { number: state.number + 1 };
+    case 'DECREMENT':
+      return { number: state.number - 1 }
+    default:
+      return state;
+  }
+}
+//实现redux-logger,在每次状态变更后打印新的状态值
+//
+function useLogger(reducer, initialState) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  function loggerDispatch(action) {
+    console.log('老状态', state);
+    dispatch(action);
   }
   useEffect(() => {
-    console.log(refObject);
+    console.log('新状态', state);
 
-  }, [])
+  })
+  return [state, loggerDispatch];
+}
+function App() {
+  const [state, dispatch] = useLogger(reducer, initialState);
   return (
     <div>
-      <input ref={refObject}></input>
-      <button onClick={getFocus}>获得焦点</button>
+      <p>{state.number}</p>
+      <button onClick={() => dispatch({ type: 'INCREMENT' })}>+</button>
+      <button onClick={() => dispatch({ type: 'DECREMENT' })}>-</button>
     </div>
   )
 }
-function Parent() {
-  let [number, setNumber] = useState(0);
-  return (
-    <div>
-      <Child />
-      <button onClick={() => setNumber(x => x + 1)}>+</button>
-    </div>
-  )
-}
-ReactDOM.render(<Parent />, document.getElementById('root'));
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+
 
 
